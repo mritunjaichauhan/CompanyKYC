@@ -7,12 +7,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
 
 export default function CompanyKYCForm() {
   const [formData, setFormData] = useState({
     legalName: "",
     businessPAN: "",
     businessType: "",
+    registeredAddress: "",
+    state: "",
     email: "",
     mobile: "",
     signatoryName: "",
@@ -26,7 +29,7 @@ export default function CompanyKYCForm() {
   const [gstVerified, setGstVerified] = useState<boolean | null>(null)
   const [gstError, setGstError] = useState("")
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
     if (name === "gstNumber") {
@@ -64,14 +67,54 @@ export default function CompanyKYCForm() {
     }
   }
 
-  const handleSelectChange = (businessType: string) => {
-    setFormData((prev) => ({ ...prev, businessType }))
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Form submitted:", formData)
   }
+
+  // List of Indian states
+  const indianStates = [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Andaman and Nicobar Islands",
+    "Chandigarh",
+    "Dadra and Nagar Haveli and Daman and Diu",
+    "Delhi",
+    "Jammu and Kashmir",
+    "Ladakh",
+    "Lakshadweep",
+    "Puducherry",
+  ]
 
   return (
     <section className="min-h-screen w-full py-12 px-4 md:px-8 lg:px-24 relative flex items-center justify-center">
@@ -83,6 +126,7 @@ export default function CompanyKYCForm() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "repeat",
+          animation: "seamlessLoop 8s linear infinite",
         }}
       />
 
@@ -143,7 +187,7 @@ export default function CompanyKYCForm() {
                 />
               </div>
               {panFile && <p className="text-sm text-slate-400">File: {panFile.name}</p>}
-              <Select onValueChange={handleSelectChange}>
+              <Select onValueChange={(value) => handleSelectChange("businessType", value)}>
                 <SelectTrigger className="bg-black/60 border-slate-700/50 text-white">
                   <SelectValue placeholder="Type of Business" />
                 </SelectTrigger>
@@ -152,6 +196,25 @@ export default function CompanyKYCForm() {
                   <SelectItem value="llp">LLP</SelectItem>
                   <SelectItem value="proprietorship">Proprietorship</SelectItem>
                   <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+              <Textarea
+                placeholder="Registered Address of Company"
+                name="registeredAddress"
+                value={formData.registeredAddress}
+                onChange={handleInputChange}
+                className="bg-black/60 border-slate-700/50 text-white placeholder:text-slate-500"
+              />
+              <Select onValueChange={(value) => handleSelectChange("state", value)}>
+                <SelectTrigger className="bg-black/60 border-slate-700/50 text-white">
+                  <SelectValue placeholder="Select State" />
+                </SelectTrigger>
+                <SelectContent>
+                  {indianStates.map((state) => (
+                    <SelectItem key={state} value={state}>
+                      {state}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
